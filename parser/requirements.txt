@@ -1,0 +1,6 @@
+requests==2.32.3
+python-dotenv==1.0.1
+tqdm==4.66.5
+pydantic==2.8.2
+psycopg2-binary==2.9.9
+opensearch-py==2.6.0

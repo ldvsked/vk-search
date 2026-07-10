@@ -1,0 +1,28 @@
+# env
+.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Go
+bin/
+*.exe
+
+# IDE
+.idea/
+.vscode/
+
+# Data files
+data/*
+!data/.gitkeep
+*.jsonl
+*.csv
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

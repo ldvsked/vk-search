@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: vk_search_postgres
+    environment:
+      POSTGRES_DB: vk_search
+      POSTGRES_USER: vk_user
+      POSTGRES_PASSWORD: vk_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/01_init.sql
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/02_seed.sql
+    restart: unless-stopped
+
+  opensearch:
+    image: opensearchproject/opensearch:2.15.0
+    container_name: vk_search_opensearch
+    environment:
+      discovery.type: single-node
+      plugins.security.disabled: "true"
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: "admin12345!"
+      bootstrap.memory_lock: "true"
+      OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  opensearch_data:
