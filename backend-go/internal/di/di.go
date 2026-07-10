@@ -8,6 +8,7 @@ import (
 	"vk-search/internal/api"
 	"vk-search/internal/api/handlers"
 	"vk-search/internal/app/auth"
+	"vk-search/internal/app/search"
 	"vk-search/internal/infrastructure/config"
 	"vk-search/internal/infrastructure/mocks"
 )
@@ -15,14 +16,24 @@ import (
 func BuildApp() *fx.App {
 	return fx.New(
 		fx.Provide(
-			config.Load,
-			mocks.NewUserMockRepository,
-			fx.Annotate(
-				func(cfg *config.Config) auth.TokenConfig { return cfg },
-			),
-			auth.NewAuthUseCase,
-			handlers.NewAuthHandler,
-			api.NewRouter,
+			// 1. Конфигурация
+		config.Load,
+		fx.Annotate(
+			func(cfg *config.Config) auth.TokenConfig { return cfg },
+		),
+
+		// 2. Репозитории (Инфраструктурный слой)
+		mocks.NewUserMockRepository,
+		mocks.NewSearchMockRepository, 
+
+		// 3. Юзкейсы (Бизнес-логика / Слой приложения)
+		auth.NewAuthUseCase,
+		search.NewSearchUseCase, 
+
+		// 4. Хендлеры и Маршрутизация (Транспортный слой)
+		handlers.NewAuthHandler,
+		handlers.NewSearchHandler, 
+		api.NewRouter,
 		),
 		fx.Invoke(func(lc fx.Lifecycle, handler http.Handler, cfg *config.Config) {
 			srv := &http.Server{
