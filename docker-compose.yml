@@ -1,13 +1,13 @@
 services:
-  postgres:
+  postgres_db:
     image: postgres:16
     container_name: vk_search_postgres
     environment:
-      POSTGRES_DB: vk_search
       POSTGRES_USER: vk_user
       POSTGRES_PASSWORD: vk_password
+      POSTGRES_DB: vk_search
     ports:
-      - "55432:5432"
+      - "5445:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/01_init.sql
