@@ -13,6 +13,7 @@ cd parser
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+```
 
 ## Очистка данных
 
@@ -20,6 +21,7 @@ pip install -r requirements.txt
 
 ```bash
 python parser/02_clean_posts.py
+```
 
 
 ## Чанкинг документов
@@ -28,6 +30,7 @@ python parser/02_clean_posts.py
 
 ```bash
 python parser/04_chunk_documents.py --recreate
+```
 
 
 ## Создание индекса OpenSearch
@@ -36,3 +39,4 @@ python parser/04_chunk_documents.py --recreate
 
 ```bash
 python parser/05_create_opensearch_index.py --recreate
+```
