@@ -21,20 +21,24 @@ func NewUserRepository(pool *pgxpool.Pool) domain.UserRepository {
 }
 
 func (r *userRepository) GetByUsername(ctx context.Context, username string) (*domain.User, error) {
+	// Добавили JOIN с таблицей roles и вытягиваем r.name
 	query := `
-		SELECT id, username, password_hash, role_id 
-		FROM users 
-		WHERE username = $1 
+		SELECT u.id, u.username, u.password_hash, u.role_id, r.name as role_name
+		FROM users u
+		JOIN roles r ON u.role_id = r.id
+		WHERE u.username = $1 
 		LIMIT 1;
 	`
 
 	var user domain.User
 
+	// Сканируем дополнительное поле &user.RoleName
 	err := r.pool.QueryRow(ctx, query, username).Scan(
 		&user.ID,
 		&user.Username,
 		&user.PasswordHash,
 		&user.RoleID,
+		&user.RoleName,
 	)
 
 	if err != nil {

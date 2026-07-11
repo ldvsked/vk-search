@@ -12,7 +12,7 @@ type contextKey string
 
 const (
 	UserIDKey   contextKey = "user_id"
-	RoleIDKey   contextKey = "role_id"
+	RoleKey     contextKey = "role"     // Переименовали в RoleKey, так как теперь храним строку
 	UsernameKey contextKey = "username"
 )
 
@@ -63,9 +63,12 @@ func AuthMiddleware(jwtSecret []byte) func(http.Handler) http.Handler {
 			if userID, ok := claims["user_id"].(float64); ok {
 				ctx = context.WithValue(ctx, UserIDKey, int64(userID))
 			}
-			if roleID, ok := claims["role_id"].(float64); ok {
-				ctx = context.WithValue(ctx, RoleIDKey, int64(roleID))
+			
+			// Извлекаем "role" как строку ("reader", "editor", "admin") вместо числа
+			if role, ok := claims["role"].(string); ok {
+				ctx = context.WithValue(ctx, RoleKey, role)
 			}
+			
 			if username, ok := claims["username"].(string); ok {
 				ctx = context.WithValue(ctx, UsernameKey, username)
 			}

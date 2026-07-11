@@ -20,7 +20,9 @@ type loginRequest struct {
 }
 
 type loginResponse struct {
-	Token string `json:"token"`
+	AccessToken string `json:"access_token"`
+	TokenType   string `json:"token_type"`
+	Role        string `json:"role"`
 }
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
@@ -30,7 +32,8 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := h.authUC.Login(r.Context(), req.Username, req.Password)
+	// Принимаем три параметра: token, role, err
+	token, role, err := h.authUC.Login(r.Context(), req.Username, req.Password)
 	if err != nil {
 		h.writeError(w, http.StatusUnauthorized, "invalid credentials")
 		return
@@ -38,7 +41,12 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(loginResponse{Token: token})
+	
+	json.NewEncoder(w).Encode(loginResponse{
+		AccessToken: token,
+		TokenType:   "Bearer",
+		Role:        role,
+	})
 }
 
 func (h *AuthHandler) writeError(w http.ResponseWriter, statusCode int, message string) {

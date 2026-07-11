@@ -26,24 +26,26 @@ func NewAuthUseCase(userRepo domain.UserRepository, cfg TokenConfig) domain.Auth
 	}
 }
 
-func (uc *authUseCase) Login(ctx context.Context, username, password string) (string, error) {
+// Изменили возвращаемые типы на (string, string, error)
+func (uc *authUseCase) Login(ctx context.Context, username, password string) (string, string, error) {
 	user, err := uc.userRepo.GetByUsername(ctx, username)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	
 	if user == nil {
-		return "", errors.New("invalid username or password")
+		return "", "", errors.New("invalid username or password")
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
-		return "", errors.New("invalid credentials")
+		return "", "", errors.New("invalid credentials")
 	}
 
+	// Заменили "role_id" (число) на "role" (строка) для автономности токена
 	claims := jwt.MapClaims{
 		"user_id":  user.ID,
 		"username": user.Username,
-		"role_id":  user.RoleID,
+		"role":     user.RoleName, 
 		"exp":      time.Now().Add(24 * time.Hour).Unix(),
 	}
 
@@ -51,8 +53,9 @@ func (uc *authUseCase) Login(ctx context.Context, username, password string) (st
 
 	tokenString, err := token.SignedString(uc.jwtSecret)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return tokenString, nil
+	// Возвращаем токен и имя роли строкой
+	return tokenString, user.RoleName, nil
 }

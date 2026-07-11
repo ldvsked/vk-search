@@ -3,10 +3,11 @@ package domain
 import "context"
 
 type User struct {
-	ID           int64
-	Username     string
-	PasswordHash string
-	RoleID       int
+    ID           int64
+    Username     string
+    PasswordHash string
+    RoleID       int64
+    RoleName     string // Добавляем это поле
 }
 
 type UserRepository interface {
@@ -14,5 +15,5 @@ type UserRepository interface {
 }
 
 type AuthUseCase interface {
-	Login(ctx context.Context, username, password string) (string, error)
+	Login(ctx context.Context, username, password string) (string, string, error)
 }
