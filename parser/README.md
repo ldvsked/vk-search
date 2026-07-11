@@ -28,3 +28,11 @@ python parser/02_clean_posts.py
 
 ```bash
 python parser/04_chunk_documents.py --recreate
+
+
+## Создание индекса OpenSearch
+
+Перед индексацией нужно создать индекс:
+
+```bash
+python parser/05_create_opensearch_index.py --recreate
