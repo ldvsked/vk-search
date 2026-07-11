@@ -69,6 +69,34 @@ def split_long_paragraph(paragraph: str, max_chars: int) -> list[str]:
 
     return chunks
 
+def merge_small_chunks(
+    chunks: list[str],
+    min_chars: int,
+    max_chars: int,
+) -> list[str]:
+    """
+    Склеивает слишком маленькие чанки с соседями.
+    Если из-за склейки чанк немного превысит max_chars, это допустимо:
+    лучше один чанк 1850-2000 символов, чем отдельный мусорный чанк на 18 символов.
+    """
+    result: list[str] = []
+
+    for chunk in chunks:
+        chunk = chunk.strip()
+
+        if not chunk:
+            continue
+
+        if len(chunk) < min_chars and result:
+            result[-1] = f"{result[-1]}\n\n{chunk}".strip()
+        else:
+            result.append(chunk)
+
+    if len(result) >= 2 and len(result[0]) < min_chars:
+        result[1] = f"{result[0]}\n\n{result[1]}".strip()
+        result = result[1:]
+
+    return result
 
 def chunk_text(text: str, max_chars: int = 1800, min_chars: int = 300) -> list[str]:
     """
@@ -112,23 +140,11 @@ def chunk_text(text: str, max_chars: int = 1800, min_chars: int = 300) -> list[s
     if current:
         raw_chunks.append(current.strip())
 
-    # Склейка слишком маленьких чанков с предыдущим, если помещается.
-    merged_chunks = []
-
-    for chunk in raw_chunks:
-        if not chunk:
-            continue
-
-        if (
-            merged_chunks
-            and len(chunk) < min_chars
-            and len(merged_chunks[-1]) + len(chunk) + 2 <= max_chars
-        ):
-            merged_chunks[-1] = f"{merged_chunks[-1]}\n\n{chunk}".strip()
-        else:
-            merged_chunks.append(chunk)
-
-    return merged_chunks
+    return merge_small_chunks(
+    chunks=raw_chunks,
+    min_chars=min_chars,
+    max_chars=max_chars,
+)
 
 
 def fetch_documents(cursor) -> list[Document]:
