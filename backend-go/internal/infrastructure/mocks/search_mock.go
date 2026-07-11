@@ -2,17 +2,22 @@ package mocks
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 	"vk-search/internal/domain"
 )
 
 type SearchMockRepository struct {
 	posts []domain.Post
+	pool  *pgxpool.Pool
 }
 
-func NewSearchMockRepository() domain.SearchRepository {
+func NewSearchMockRepository(pool *pgxpool.Pool) domain.SearchRepository {
 	return &SearchMockRepository{
+		pool: pool,
 		posts: []domain.Post{
 			{
 				ChunkID:     "chunk_1",
@@ -52,4 +57,24 @@ func (r *SearchMockRepository) Search(ctx context.Context, query string, limit i
 	}
 
 	return filtered, nil
+}
+
+func (r *SearchMockRepository) SaveLog(ctx context.Context, log *domain.SearchLog) error {
+	query := `
+		INSERT INTO search_logs (user_id, query, mode, limit_value, result_count)
+		VALUES ($1, $2, $3, $4, $5)
+		RETURNING id, created_at;
+	`
+	err := r.pool.QueryRow(ctx, query,
+		log.UserID,
+		log.Query,
+		log.Mode,
+		log.LimitValue,
+		log.ResultCount,
+	).Scan(&log.ID, &log.CreatedAt)
+
+	if err != nil {
+		return fmt.Errorf("failed to insert log in mock repo: %w", err)
+	}
+	return nil
 }
