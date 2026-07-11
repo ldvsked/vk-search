@@ -1,9 +1,13 @@
 import os
+from pathlib import Path
 from dataclasses import dataclass
 from dotenv import load_dotenv
 
 
-load_dotenv()
+ROOT_DIR = Path(__file__).resolve().parents[1]
+ENV_PATH = ROOT_DIR / ".env"
+
+load_dotenv(dotenv_path=ENV_PATH, override=True)
 
 
 @dataclass(frozen=True)
