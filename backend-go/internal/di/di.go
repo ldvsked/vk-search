@@ -11,6 +11,7 @@ import (
 	"vk-search/internal/app/search"
 	"vk-search/internal/infrastructure/config"
 	"vk-search/internal/infrastructure/mocks"
+	"vk-search/internal/infrastructure/postgres"
 )
 
 func BuildApp() *fx.App {
@@ -23,7 +24,8 @@ func BuildApp() *fx.App {
 		),
 
 		// 2. Репозитории (Инфраструктурный слой)
-		mocks.NewUserMockRepository,
+		postgres.NewPgxPool,
+		postgres.NewUserRepository,
 		mocks.NewSearchMockRepository, 
 
 		// 3. Юзкейсы (Бизнес-логика / Слой приложения)

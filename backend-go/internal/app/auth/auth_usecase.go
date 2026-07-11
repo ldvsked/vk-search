@@ -31,6 +31,10 @@ func (uc *authUseCase) Login(ctx context.Context, username, password string) (st
 	if err != nil {
 		return "", err
 	}
+	
+	if user == nil {
+		return "", errors.New("invalid username or password")
+	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
 		return "", errors.New("invalid credentials")
