@@ -11,6 +11,7 @@ func NewRouter(authHandler *handlers.AuthHandler,
 	searchHandler *handlers.SearchHandler, 
 	healthHandler *handlers.HealthHandler,
 	statsHandler *handlers.StatsHandler,
+	documentHandler *handlers.DocumentHandler,
 	cfg *config.Config,
 ) http.Handler {
 	mux := http.NewServeMux()
@@ -26,6 +27,9 @@ func NewRouter(authHandler *handlers.AuthHandler,
 
 	statsChain := authMiddleware(rbacMiddleware(http.HandlerFunc(statsHandler.GetStats)))
 	mux.Handle("GET /api/v1/stats", statsChain)
+
+	documentChain := authMiddleware(rbacMiddleware(http.HandlerFunc(documentHandler.GetByID)))
+	mux.Handle("GET /api/v1/documents/{id}", documentChain)
 
 	return mux
 }
