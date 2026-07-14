@@ -10,6 +10,7 @@ import (
 	"vk-search/internal/app/auth"
 	"vk-search/internal/app/search"
 	"vk-search/internal/app/health"
+	"vk-search/internal/app/stats"
 	"vk-search/internal/infrastructure/config"
 	"vk-search/internal/infrastructure/mocks"
 	"vk-search/internal/infrastructure/postgres"
@@ -28,18 +29,22 @@ func BuildApp() *fx.App {
 		postgres.NewPgxPool,
 		postgres.NewUserRepository,
 		postgres.NewHealthRepository,
+		postgres.NewStatsRepository,
 		mocks.NewSearchMockRepository, 
+        mocks.NewChunkRepository,
 
 		// 3. Юзкейсы (Бизнес-логика / Слой приложения)
 		auth.NewAuthUseCase,
 		search.NewSearchUseCase,
 		health.NewHealthUseCase,
+		stats.NewStatsUseCase,
 
 		// 4. Хендлеры и Маршрутизация (Транспортный слой)
 		handlers.NewAuthHandler,
 		handlers.NewSearchHandler, 
-		api.NewRouter,
+		handlers.NewStatsHandler,
 		handlers.NewHealthHandler,
+		api.NewRouter,
 		),
 		fx.Invoke(func(lc fx.Lifecycle, handler http.Handler, cfg *config.Config) {
 			srv := &http.Server{
