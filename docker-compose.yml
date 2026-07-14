@@ -54,8 +54,7 @@ services:
       OPENSEARCH_URL: http://opensearch:9200
       OPENSEARCH_INDEX: vk_chunks
     command: ["bash", "scripts/bootstrap_seed.sh"]
-    profiles:
-      - seed
+    restart: "no"
 
 volumes:
   postgres_data:
