@@ -37,6 +37,25 @@ services:
       - opensearch_data:/usr/share/opensearch/data
     restart: unless-stopped
 
+  data_bootstrap:
+    build:
+      context: .
+      dockerfile: parser/Dockerfile
+    container_name: vk_search_data_bootstrap
+    depends_on:
+      - postgres_db
+      - opensearch
+    environment:
+      POSTGRES_HOST: postgres_db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: vk_search
+      POSTGRES_USER: vk_user
+      POSTGRES_PASSWORD: vk_password
+      OPENSEARCH_URL: http://opensearch:9200
+      OPENSEARCH_INDEX: vk_chunks
+    command: ["bash", "scripts/bootstrap_seed.sh"]
+    restart: "no"
+
 volumes:
   postgres_data:
   opensearch_data:

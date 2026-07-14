@@ -19,6 +19,8 @@ bin/
 # Data files
 data/*
 !data/.gitkeep
+!data/seed/
+!data/seed/*.jsonl
 *.jsonl
 *.csv
 *.log
