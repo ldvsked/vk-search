@@ -29,23 +29,59 @@ func NewOpenSearchRepository(osClient *opensearch.Client, pool *pgxpool.Pool, cf
 type osResponse struct {
 	Hits struct {
 		Hits []struct {
+			Score  float64      `json:"_score"`
 			Source domain.Post `json:"_source"`
 		} `json:"hits"`
 	} `json:"hits"`
 }
 
-func (r *openSearchRepository) Search(ctx context.Context, query string, limit int) ([]domain.Post, error) {
-	searchQuery := map[string]interface{}{
-		"size": limit,
-		"query": map[string]interface{}{
-			"multi_match": map[string]interface{}{
-				"query":  query,
-				"fields": []string{"title", "content"},
-			},
-		},
+func (r *openSearchRepository) Search(ctx context.Context, query string, limit int, source string, dateFrom string, dateTo string) ([]domain.Post, error) {
+	// Базовая структура bool-запроса
+	boolQuery := map[string]interface{}{
+		"filter": []map[string]interface{}{},
 	}
-	if query == "" {
-		searchQuery["query"] = map[string]interface{}{"match_all": map[string]interface{}{}}
+
+	// Добавляем фильтры
+	if source != "" {
+		boolQuery["filter"] = append(boolQuery["filter"].([]map[string]interface{}), map[string]interface{}{
+			"term": map[string]interface{}{"source_name": source},
+		})
+	}
+
+	if dateFrom != "" || dateTo != "" {
+		rangeFilter := map[string]interface{}{}
+		if dateFrom != "" {
+			rangeFilter["gte"] = dateFrom
+		}
+		if dateTo != "" {
+			rangeFilter["lte"] = dateTo
+		}
+		boolQuery["filter"] = append(boolQuery["filter"].([]map[string]interface{}), map[string]interface{}{
+			"range": map[string]interface{}{"published_at": rangeFilter},
+		})
+	}
+
+	// Добавляем поисковую логику (must)
+	if query != "" {
+		boolQuery["must"] = []map[string]interface{}{
+			{
+				"multi_match": map[string]interface{}{
+					"query":  query,
+					"fields": []string{"title^2", "content", "source_name"},
+				},
+			},
+		}
+	} else {
+		boolQuery["must"] = []map[string]interface{}{
+			{"match_all": map[string]interface{}{}},
+		}
+	}
+
+	searchQuery := map[string]interface{}{
+		"size":  limit,
+		"query": map[string]interface{}{
+			"bool": boolQuery,
+		},
 	}
 
 	var buf bytes.Buffer
@@ -74,7 +110,9 @@ func (r *openSearchRepository) Search(ctx context.Context, query string, limit i
 
 	posts := make([]domain.Post, 0, len(rawResp.Hits.Hits))
 	for _, hit := range rawResp.Hits.Hits {
-		posts = append(posts, hit.Source)
+		post := hit.Source
+		post.Score = hit.Score
+		posts = append(posts, post)
 	}
 
 	return posts, nil

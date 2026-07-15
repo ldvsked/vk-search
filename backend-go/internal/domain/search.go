@@ -6,6 +6,7 @@ import (
 )
 
 type Post struct {
+	Score       float64 `json:"score"`
     ChunkID     int64     `json:"chunk_id"`    // Теперь это тоже int64!
     DocumentID  int64     `json:"document_id"` // Уже исправили на int64
     SourceName  string    `json:"source_name"`
@@ -25,10 +26,10 @@ type SearchLog struct {
 }
 
 type SearchRepository interface {
-	Search(ctx context.Context, query string, limit int) ([]Post, error)
+	Search(ctx context.Context, query string, limit int, source string, dateFrom string, dateTo string) ([]Post, error)
 	SaveLog(ctx context.Context, log *SearchLog) error
 }
 
 type SearchUseCase interface {
-	Execute(ctx context.Context, query string, limit int) ([]Post, error)
+    Execute(ctx context.Context, query string, limit int, source string, dateFrom string, dateTo string) ([]Post, error)
 }

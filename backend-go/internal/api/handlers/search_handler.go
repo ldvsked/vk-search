@@ -17,6 +17,9 @@ func NewSearchHandler(useCase domain.SearchUseCase) *SearchHandler {
 
 func (h *SearchHandler) Search(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query().Get("q")
+	source := r.URL.Query().Get("source")
+	dateFrom := r.URL.Query().Get("date_from")
+	dateTo := r.URL.Query().Get("date_to")
 
 	limitStr := r.URL.Query().Get("limit")
 	limit := 10
@@ -26,7 +29,7 @@ func (h *SearchHandler) Search(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	results, err := h.useCase.Execute(r.Context(), query, limit)
+	results, err := h.useCase.Execute(r.Context(), query, limit, source, dateFrom, dateTo)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)

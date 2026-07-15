@@ -10,6 +10,7 @@ type AskRequest struct {
 
 // AskSource — структура одного источника информации для ИИ.
 type AskSource struct {
+	Score       float64 `json:"score"`
     DocumentID int64 `json:"document_id"`
     ChunkID    int64 `json:"chunk_id"` // Тоже меняем на int64 по ТЗ!
     Title      string `json:"title"`

@@ -33,7 +33,7 @@ func (uc *askUseCase) Ask(ctx context.Context, req domain.AskRequest, userID int
 
 	askCtx := context.WithValue(ctx, domain.ModeKey, "ask")
 
-	posts, err := uc.searchUC.Execute(askCtx, cleanedQuery, req.TopK)
+	posts, err := uc.searchUC.Execute(askCtx, cleanedQuery, req.TopK, "", "", "")
 	if err != nil {
 		return nil, fmt.Errorf("search failed: %w", err)
 	}
@@ -41,6 +41,7 @@ func (uc *askUseCase) Ask(ctx context.Context, req domain.AskRequest, userID int
 	sources := make([]domain.AskSource, 0, len(posts))
 	for _, p := range posts {
 		sources = append(sources, domain.AskSource{
+			Score:      p.Score,
 			DocumentID: p.DocumentID, // int64 -> int64
 			ChunkID:    p.ChunkID,    // int64 -> int64
 			Title:      p.Title,

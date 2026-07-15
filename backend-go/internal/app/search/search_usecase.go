@@ -15,8 +15,8 @@ func NewSearchUseCase(repo domain.SearchRepository) domain.SearchUseCase {
 	return &SearchUseCase{repo: repo}
 }
 
-func (uc *SearchUseCase) Execute(ctx context.Context, query string, limit int) ([]domain.Post, error) {
-	results, err := uc.repo.Search(ctx, query, limit)
+func (uc *SearchUseCase) Execute(ctx context.Context, query string, limit int, source string, dateFrom string, dateTo string) ([]domain.Post, error) {
+	results, err := uc.repo.Search(ctx, query, limit, source, dateFrom, dateTo)
 	if err != nil {
 		return nil, err
 	}

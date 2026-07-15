@@ -80,7 +80,13 @@ func (c *openRouterClient) GenerateAnswer(ctx context.Context, rawQuery string, 
 		if len(content) > 2000 {
 			content = content[:2000] + "..."
 		}
-		docsContext += fmt.Sprintf("[%d]\nЗаголовок: %s\nСсылка: %s\nТекст: %s\n\n", i+1, d.Title, d.URL, content)
+		docsContext += fmt.Sprintf("[%d]\nЗаголовок: %s\nИсточник: %s\nСсылка: %s\nТекст: %s\n\n", 
+            i+1, 
+            d.Title, 
+            d.SourceName, 
+            d.URL, 
+            content,
+        )
 	}
 
 	prompt := fmt.Sprintf(template, docsContext, rawQuery)
