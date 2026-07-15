@@ -1,4 +1,21 @@
 services:
+  backend:
+    build:
+      context: ./backend-go
+      dockerfile: Dockerfile
+    container_name: vk_search_backend
+    env_file:
+      - .env  # Загружает общие настройки (пароли, юзеры)
+    environment:
+      - POSTGRES_HOST=postgres_db # Переопределяем хост для Docker
+      - POSTGRES_PORT=5432       # Внутри сети Docker порт 5432
+      - OPENSEARCH_URL=http://opensearch:9200
+    depends_on:
+      - postgres_db
+      - opensearch
+    ports:
+      - "8080:8080"
+
   postgres_db:
     image: postgres:16
     container_name: vk_search_postgres

@@ -28,10 +28,7 @@ type Config struct {
 
 func Load() (*Config, error) {
 	// Твоя проверенная загрузка .env
-	err := godotenv.Load("../.env")
-	if err != nil {
-		return nil, fmt.Errorf("failed to load .env from project root: %w", err)
-	}
+	_ = godotenv.Load()
 
 	// Парсим булевое значение для LLM_ENABLED с дефолтом true
 	llmEnabled := true
