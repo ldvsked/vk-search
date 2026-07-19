@@ -36,12 +36,10 @@ type osResponse struct {
 }
 
 func (r *openSearchRepository) Search(ctx context.Context, query string, limit int, source string, dateFrom string, dateTo string) ([]domain.Post, error) {
-	// Базовая структура bool-запроса
 	boolQuery := map[string]interface{}{
 		"filter": []map[string]interface{}{},
 	}
 
-	// Добавляем фильтры
 	if source != "" {
 		boolQuery["filter"] = append(boolQuery["filter"].([]map[string]interface{}), map[string]interface{}{
 			"term": map[string]interface{}{"source_name": source},
@@ -61,7 +59,6 @@ func (r *openSearchRepository) Search(ctx context.Context, query string, limit i
 		})
 	}
 
-	// Добавляем поисковую логику (must)
 	if query != "" {
 		boolQuery["must"] = []map[string]interface{}{
 			{

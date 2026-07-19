@@ -31,10 +31,8 @@ type Config struct {
 }
 
 func Load() (*Config, error) {
-	// Твоя проверенная загрузка .env
 	_ = godotenv.Load()
 
-	// Парсим булевое значение для LLM_ENABLED с дефолтом true
 	llmEnabled := true
 	if enabledStr := os.Getenv("LLM_ENABLED"); enabledStr != "" {
 		if val, err := strconv.ParseBool(enabledStr); err == nil {
@@ -42,7 +40,6 @@ func Load() (*Config, error) {
 		}
 	}
 
-	// Парсим таймаут с дефолтом 40 секунд
 	llmTimeout := 40
 	if timeoutStr := os.Getenv("LLM_TIMEOUT_SECONDS"); timeoutStr != "" {
 		if val, err := strconv.Atoi(timeoutStr); err == nil {
@@ -50,7 +47,6 @@ func Load() (*Config, error) {
 		}
 	}
 
-	// Парсим лимит символов контекста с дефолтом 12000
 	llmMaxChars := 12000
 	if charsStr := os.Getenv("LLM_MAX_CONTEXT_CHARS"); charsStr != "" {
 		if val, err := strconv.Atoi(charsStr); err == nil {
@@ -67,7 +63,6 @@ func Load() (*Config, error) {
 		dbPass:             os.Getenv("POSTGRES_PASSWORD"),
 		dbName:             os.Getenv("POSTGRES_DB"),
 
-		// Инициализация LLM полей
 		llmEnabled:         llmEnabled,
 		llmBaseURL:         os.Getenv("LLM_BASE_URL"),
 		llmAPIKey:          os.Getenv("LLM_API_KEY"),
@@ -82,7 +77,6 @@ func Load() (*Config, error) {
 	return cfg, nil
 }
 
-// --- Существующие геттеры ---
 
 func (c *Config) GetJWTSecret() string {
 	return c.jwtSecret
@@ -105,7 +99,6 @@ func (c *Config) GetDBDSN() string {
 	)
 }
 
-// --- Новые геттеры для LLM ---
 
 func (c *Config) IsLLMEnabled() bool {
 	return c.llmEnabled
@@ -139,14 +132,14 @@ func (c *Config) GetLLMMaxContextChars() int {
 
 func (c *Config) GetOpenSearchURL() string {
     if c.osURL == "" {
-        return "http://localhost:9200" // Дефолт для локальной разработки
+        return "http://localhost:9200" 
     }
     return c.osURL
 }
 
 func (c *Config) GetOpenSearchIndex() string {
     if c.osIndex == "" {
-        return "vk_chunks" // Твое имя индекса
+        return "vk_chunks" 
     }
     return c.osIndex
 }

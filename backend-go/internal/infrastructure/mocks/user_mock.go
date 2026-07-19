@@ -13,7 +13,6 @@ type UserMockRepository struct {
 }
 
 func NewUserMockRepository() domain.UserRepository {
-	// Генерируем железно рабочий хэш прямо на месте
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("password"), bcrypt.DefaultCost)
 	if err != nil {
 		panic("failed to generate mock password hash: " + err.Error())

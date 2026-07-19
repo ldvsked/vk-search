@@ -1,6 +1,5 @@
 package domain
 
-// Уникальный тип для ключей контекста нашего приложения
 type ContextKey string
 
 const (

@@ -7,7 +7,7 @@ type User struct {
     Username     string
     PasswordHash string
     RoleID       int64
-    RoleName     string // Добавляем это поле
+    RoleName     string 
 }
 
 type UserRepository interface {

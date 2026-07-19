@@ -9,7 +9,7 @@ type IndexRun struct {
 	Status         string
 	DocumentsCount int
 	ChunksCount    int
-	FinishedAt     sql.NullString // Используем sql.NullString для корректной обработки NULL из БД
+	FinishedAt     sql.NullString 
 }
 
 type Stats struct {
@@ -21,7 +21,6 @@ type Stats struct {
 }
 
 type StatsRepository interface {
-	// Метод теперь возвращает полную статистику, агрегированную из разных таблиц Postgres
 	GetGeneralStats(ctx context.Context) (*Stats, error)
 }
 

@@ -19,7 +19,7 @@ func (h *HealthHandler) Check(w http.ResponseWriter, r *http.Request) {
     dbStatus := "up"
 
     if err := h.useCase.CheckHealth(r.Context()); err != nil {
-        status = "degraded" // Приложение живо, но зависимость упала
+        status = "degraded"
         dbStatus = "down"
     }
 

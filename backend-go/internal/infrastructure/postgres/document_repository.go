@@ -48,7 +48,7 @@ func (r *documentRepository) GetByID(ctx context.Context, id int64) (*domain.Doc
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, nil // Если документа нет, возвращаем nil без ошибки (это обработает UseCase/Handler)
+			return nil, nil 
 		}
 		return nil, fmt.Errorf("failed to fetch document from db: %w", err)
 	}

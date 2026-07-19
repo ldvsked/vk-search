@@ -9,7 +9,6 @@ type usecase struct {
 	statsRepo domain.StatsRepository
 }
 
-// NewStatsUseCase теперь принимает только StatsRepository
 func NewStatsUseCase(sr domain.StatsRepository) domain.StatsUseCase {
 	return &usecase{
 		statsRepo: sr,

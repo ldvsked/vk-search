@@ -32,7 +32,6 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Принимаем три параметра: token, role, err
 	token, role, err := h.authUC.Login(r.Context(), req.Username, req.Password)
 	if err != nil {
 		h.writeError(w, http.StatusUnauthorized, "invalid credentials")

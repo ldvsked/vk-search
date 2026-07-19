@@ -26,7 +26,6 @@ func NewAuthUseCase(userRepo domain.UserRepository, cfg TokenConfig) domain.Auth
 	}
 }
 
-// Изменили возвращаемые типы на (string, string, error)
 func (uc *authUseCase) Login(ctx context.Context, username, password string) (string, string, error) {
 	user, err := uc.userRepo.GetByUsername(ctx, username)
 	if err != nil {
@@ -41,7 +40,6 @@ func (uc *authUseCase) Login(ctx context.Context, username, password string) (st
 		return "", "", errors.New("invalid credentials")
 	}
 
-	// Заменили "role_id" (число) на "role" (строка) для автономности токена
 	claims := jwt.MapClaims{
 		"user_id":  user.ID,
 		"username": user.Username,
@@ -56,6 +54,5 @@ func (uc *authUseCase) Login(ctx context.Context, username, password string) (st
 		return "", "", err
 	}
 
-	// Возвращаем токен и имя роли строкой
 	return tokenString, user.RoleName, nil
 }

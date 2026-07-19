@@ -7,8 +7,8 @@ import (
 
 type Post struct {
 	Score       float64 `json:"score"`
-    ChunkID     int64     `json:"chunk_id"`    // Теперь это тоже int64!
-    DocumentID  int64     `json:"document_id"` // Уже исправили на int64
+    ChunkID     int64     `json:"chunk_id"`    
+    DocumentID  int64     `json:"document_id"` 
     SourceName  string    `json:"source_name"`
     Title       string    `json:"title"`
     Content     string    `json:"content"`
